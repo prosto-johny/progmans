@@ -1,0 +1,3 @@
+ffmpeg -i "videosource.mkv" -i "audiosource.mp3" -map 0:0 -map 1:0 -c:v copy -c:a copy result.mkv
+
+При маппинге надо быть внимательным - видеодорожка мб не обязательно в 0:0 (хотя это редкость)

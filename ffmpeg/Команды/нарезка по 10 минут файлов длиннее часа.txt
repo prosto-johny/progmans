@@ -1,0 +1,1 @@
+FOR /L %h IN (0,1,1) DO FOR /L %m IN (0,10,50) DO ffmpeg.exe -y -ss %h:%m:00 -i snd.mp3 -c copy -t 10:00 0%h.%m.mp3

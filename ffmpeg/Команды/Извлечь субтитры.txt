@@ -1,0 +1,1 @@
+ffmpeg.exe -i file.mkv -map 0:8 subs.srt

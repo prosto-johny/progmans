@@ -1,0 +1,1 @@
+FOR /L %h IN (0,1,4) DO FOR /L %m IN (0,30,30) DO ffmpeg.exe -y -ss %h:%m:00 -i re_cv.mp4 -c copy -t 30:00 0%h.%m.mp4

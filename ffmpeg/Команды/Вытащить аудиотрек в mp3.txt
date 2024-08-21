@@ -1,0 +1,4 @@
+ffmpeg -i vid.mkv -c:a mp3 -b:a 192k -map 0:1 snd.mp3
+
+Если надо увеличить громкость
+ffmpeg -i file.mp4 -map 0:1 -c:a mp3 -b:a 128k -filter:a "volume=4.0" snd.mp3

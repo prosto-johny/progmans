@@ -1,0 +1,4 @@
+-filter:a "volume=2.0"
+
+
+https://trac.ffmpeg.org/wiki/AudioVolume

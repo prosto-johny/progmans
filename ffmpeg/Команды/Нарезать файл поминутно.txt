@@ -1,0 +1,1 @@
+FOR /L %p IN (0,1,5) DO ff.exe -y -ss %p:00 -i snd.ac3 -c copy -t 1:00 %p.ac3

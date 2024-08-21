@@ -1,0 +1,1 @@
+ffmpeg [global options] [input options] -i input [output options] output

@@ -1,0 +1,53 @@
+
+-r - фреймрейт
+  ffmpeg -r 1 -i input.m2v -r 24 output.mp4
+  
+  
+  
+  
+  
+ffmpeg -y -ss 00:33:00 -t 00:00:10 -i "the_return_of_the_living_dead_1985.m2ts" -c:v libx264 -b:v 3000k -pass 1 -preset medium -vf scale=1280:-1 -vf deblock=filter=weak:block=4 -c:a copy -an -f mp4 NUL
+
+
+ffmpeg -y -ss 00:33:00 -t 00:00:10 -i "the_return_of_the_living_dead_1985.m2ts" -c:v libx264 -b:v 3000k -pass 2 -preset medium -vf scale=1280:-1 -vf deblock=filter=weak:block=4 -c:a copy "rotld_2-pass_3000k_deblock.mp4"
+
+
+полезные ссылки еще
+https://medium.com/codex/what-do-my-video-output-live-stream-details-from-ffmpeg-mean-e7eb2e16fd12 и кэш гугла для этой ссылки
+http://webcache.googleusercontent.com/search?q=cache:Q6b0zq-WuVwJ:https://medium.com/codex/what-do-my-video-output-live-stream-details-from-ffmpeg-mean-e7eb2e16fd12&sca_esv=571720465&hl=ru&gl=ru&strip=1&vwsrc=0
+
+https://ffmpeg.org/ffmpeg-all.html
+http://ffmpeg.org/ffmpeg-codecs.html
+http://www.chaneru.com/Roku/HLS/X264_Settings.htm#ipratio
+
+* * * * * * * * * * * * * * * * * * * * * * * * 
+
+Нашел наконец-то как задавать опции кодирования, через -x264-params
+https://ffmpeg.org/ffmpeg-codecs.html
+Argument is a list of key=value couples separated by ":". In filter and psy-rd options that use ":" as a separator themselves, use "," instead. They accept it as well since long ago but this is kept undocumented for some reason. 
+
+ffmpeg -y -ss 00:33:00 -t 00:00:10 -i "the_return_of_the_living_dead_1985.m2ts" -c:v libx264 -b:v 5800k -preset medium -vf scale=1280:-1 -x264-params ref=9:deblock=-3:me=umh:subme=11:me_range=48:psy-rd=1.05,1.00:fast-pskip=0:rc-lookahead=60:aq-mode=2:aq-strength=0.70 -x264opts no-dct-decimate -g 240 -bf 16 -trellis 2 -c:a copy "rotld_5800k_x264-params.mp4"
+
+
+
+что такое bframes? в девушках он 16, а в мертвецах 8
+
+b_strategy (b-adapt)
+    Adaptive B-frame placement decision algorithm. Use only on first-pass.
+	надо разобраться с этим параметром, он принимается, но b_adapt остается 1 в итоге
+	
+g (keyint) флаг, не опция
+
+aq-mode=2:aq-strength=0.70 дает aq=2:0.70 в свойствах
+
+decimate=0 можно получить так:
+https://forum.videohelp.com/threads/390298-FFmpeg-x264-disable-deblocking
+  -x264opts no-dct-decimate
+
+
+
+rc=2pass получается когда делаешь за два прохода
+1 проход:
+ffmpeg -y -ss 00:33:00 -t 00:00:10 -i "the_return_of_the_living_dead_1985.m2ts" -c:v libx264 -b:v 5800k -preset medium -vf scale=1280:-1 -x264-params ref=9:deblock=-3:me=umh:subme=11:me_range=48:psy-rd=1.05,1.00:fast-pskip=0:rc-lookahead=60:b_strategy=2 -g 240 -bf 16 -trellis 2 -c:a copy -pass 1 -an -f mp4 NUL
+2 проход:
+ffmpeg -y -ss 00:33:00 -t 00:00:10 -i "the_return_of_the_living_dead_1985.m2ts" -c:v libx264 -b:v 5800k -preset medium -vf scale=1280:-1 -x264-params ref=9:deblock=-3:me=umh:subme=11:me_range=48:psy-rd=1.05,1.00:fast-pskip=0:rc-lookahead=60              -g 240 -bf 16 -trellis 2 -c:a copy -pass 2 "rotld_5800k_x264-2pass.mp4"

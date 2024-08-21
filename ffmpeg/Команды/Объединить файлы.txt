@@ -1,0 +1,6 @@
+Создать файл со списком
+file '/path/to/file1'
+file '/path/to/file2'
+file '/path/to/file3'
+
+ffmpeg -safe 0 -f concat -i list.txt -c copy output.mp4

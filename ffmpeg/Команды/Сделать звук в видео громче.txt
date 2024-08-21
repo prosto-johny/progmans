@@ -1,0 +1,4 @@
+#;For newer versions of ffmpeg
+ffmpeg -i input.mkv -filter:a "volume=4.0" output.mkv;
+#For older versions of ffmpeg (we use multiples of 256)
+ffmpeg -i input.mkv -vol 1024 -vcodec copy output.mkv;

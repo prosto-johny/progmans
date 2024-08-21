@@ -1,0 +1,113 @@
+* Запускаем для нужного аудиострима команду, параметры стандартные, одинаковые:
+ffmpeg -i zfilm.m2ts -map 0:1 -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=summary -f null NUL
+
+* Ждем пока команда отработает и выдаст информацию вроде этой:
+Input Integrated:    -19.1 LUFS
+Input True Peak:      +3.4 dBTP
+Input LRA:            23.4 LU
+Input Threshold:     -32.3 LUFS
+
+Output Integrated:   -17.6 LUFS
+Output True Peak:     -1.5 dBTP
+Output LRA:           17.1 LU
+Output Threshold:    -28.8 LUFS
+
+Normalization Type:   Dynamic
+Target Offset:        +1.6 LU
+
+* Используя эту информацию, запускаем команду на преобразование дорожки, заменив measured-параметры на значения из выдачи (битрейт ставим как в оригинальном файле), параметры видео указываем оставить как в оригинале:
+ffmpeg -y -i "some movie.mkv" -map 0:0 -c:v copy -map 0:1 -c:a ac3 -b:a 448k -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-19.1:measured_TP=+3.4:measured_LRA=23.4:measured_thresh=-32.3:offset=+1.6:linear=true  movie.mkv
+
+
+
+
+
+
+
+
+
+
+
+
+--Черновики
+ffmpeg -y -i "Wrong turn 1 (2003).mkv" -map 0:0 -c:v copy -map 0:1 -c:a ac3 -b:a 448k -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-19.1:measured_TP=+3.4:measured_LRA=23.4:measured_thresh=-32.3:offset=+1.6:linear=true wt2003.mkv
+
+
+
+
+Input Integrated:    -19.1 LUFS
+Input True Peak:      +3.4 dBTP
+Input LRA:            23.4 LU
+Input Threshold:     -32.3 LUFS
+
+Output Integrated:   -17.6 LUFS
+Output True Peak:     -1.5 dBTP
+Output LRA:           17.1 LU
+Output Threshold:    -28.8 LUFS
+
+Normalization Type:   Dynamic
+Target Offset:        +1.6 LU
+-------------------------------------------------
+
+ffmpeg -i in.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json -f null -
+
+ffmpeg -i /path/to/input.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=summary -f null -
+
+
+ffmpeg -i zfilm.m2ts -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=summary -f null NUL
+
+Input Integrated:    -21.7 LUFS
+Input True Peak:      -1.4 dBTP
+Input LRA:            20.0 LU
+Input Threshold:     -33.3 LUFS
+
+Output Integrated:   -16.7 LUFS
+Output True Peak:     -1.5 dBTP
+Output LRA:           12.9 LU
+Output Threshold:    -27.3 LUFS
+
+Normalization Type:   Dynamic
+Target Offset:        +0.7 LU
+
+
+// ----------------------------------------------------
+Та же команда, но только для первого аудио стрима
+ffmpeg -i zfilm.m2ts -map 0:1 -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=summary -f null NUL
+Похоже, выдает такие же данные
+
+Input Integrated:    -21.7 LUFS
+Input True Peak:      -1.4 dBTP
+Input LRA:            20.0 LU
+Input Threshold:     -33.3 LUFS
+
+Output Integrated:   -16.7 LUFS
+Output True Peak:     -1.5 dBTP
+Output LRA:           12.9 LU
+Output Threshold:    -27.3 LUFS
+
+Normalization Type:   Dynamic
+Target Offset:        +0.7 LU
+
+// ----------------------------------------------------
+
+
+
+ffmpeg -i /path/to/input.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-27.2:measured_TP=-14.4:measured_LRA=0.1:measured_thresh=-37.7:offset=-0.7:linear=true:print_format=summary output.wav
+
+ffmpeg -i in.wav -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-27.61:measured_LRA=18.06:measured_TP=-4.47:measured_thresh=-39.20:offset=0.58:linear=true:print_format=summary -ar 48k out.wav
+
+
+
+
+
+ffmpeg -y -i zfilm.m2ts -map 0:1 -c:a ac3 -b:a 640k -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-21.7:measured_TP=-1.4:measured_LRA=20.0:measured_thresh=-33.3:offset=+0.7:linear=true taxi_2_640k_loudnormed.ac3
+
+
+
+
+
+
+ffmpeg -y -i zfilm.m2ts -map 0:0 -map 0:1 -c:v libx264 -b:v 5000k -c:a ac3 -b:a 640k -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-21.7:measured_TP=-1.4:measured_LRA=20.0:measured_thresh=-33.3:offset=+0.7:linear=true taxi_2_v5000k_a640k_loudnormed.mp4
+
+
+ffmpeg -y -i zfilm.m2ts -map 0:0 -map 0:1 -c:v libx264 -b:v 5000k -c:a mp3 -b:a 640k -af loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=-21.7:measured_TP=-1.4:measured_LRA=20.0:measured_thresh=-33.3:offset=+0.7:linear=true -vf scale=1280:-1 taxi_2_v5000k_a640k_mp3_loudnormed_1280_720.mp4
